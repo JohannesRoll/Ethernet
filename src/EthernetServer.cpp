@@ -37,6 +37,11 @@ void EthernetServer::begin()
 	}
 }
 
+void EthernetServer::begin(uint16_t port)
+{
+	_port = port;
+}
+
 EthernetClient EthernetServer::available()
 {
 	bool listening = false;
