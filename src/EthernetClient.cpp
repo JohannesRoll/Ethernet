@@ -82,7 +82,7 @@ int EthernetClient::connect(IPAddress ip, uint16_t port, uint16_t timeout)
 {
 	//possible implemented return values of return are only 0 (error) or 1 (ok).
 	if(!connect(ip, port)) {
-		//indiciate error
+		//indicate error
 		return 0;
 	}
 	setConnectionTimeout(timeout);
