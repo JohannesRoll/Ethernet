@@ -23,7 +23,7 @@
 #include "Dns.h"
 #include "utility/w5100.h"
 
-int EthernetClient::connect(const char * host, uint16_t port, uint16_t timeout)
+int EthernetClient::connect(const char * host, uint16_t port)
 {
 	DNSClient dns; // Look up the host first
 	IPAddress remote_addr;
@@ -36,10 +36,19 @@ int EthernetClient::connect(const char * host, uint16_t port, uint16_t timeout)
 	}
 	dns.begin(Ethernet.dnsServerIP());
 	if (!dns.getHostByName(host, remote_addr)) return 0; // TODO: use _timeout
-	return connect(remote_addr, port, timeout);
+	return connect(remote_addr, port);
 }
 
-int EthernetClient::connect(IPAddress ip, uint16_t port, uint16_t timeout)
+int EthernetClient::connect(const char * host, uint16_t port, uint16_t timeout)
+{
+	if(!connect(host, port)) {
+		return 0;
+	}
+	setConnectionTimeout(timeout);
+	return 1;
+}
+
+int EthernetClient::connect(IPAddress ip, uint16_t port)
 {
 	if (_sockindex < MAX_SOCK_NUM) {
 		if (Ethernet.socketStatus(_sockindex) != SnSR::CLOSED) {
@@ -58,7 +67,6 @@ int EthernetClient::connect(IPAddress ip, uint16_t port, uint16_t timeout)
 	uint32_t start = millis();
 	while (1) {
 		uint8_t stat = Ethernet.socketStatus(_sockindex);
-		if(timeout > 0) setConnectionTimeout(timeout);
 		if (stat == SnSR::ESTABLISHED) return 1;
 		if (stat == SnSR::CLOSE_WAIT) return 1;
 		if (stat == SnSR::CLOSED) return 0;
@@ -68,6 +76,17 @@ int EthernetClient::connect(IPAddress ip, uint16_t port, uint16_t timeout)
 	Ethernet.socketClose(_sockindex);
 	_sockindex = MAX_SOCK_NUM;
 	return 0;
+}
+
+int EthernetClient::connect(IPAddress ip, uint16_t port, uint16_t timeout)
+{
+	//possible implemented return values of return are only 0 (error) or 1 (ok).
+	if(!connect(ip, port)) {
+		//indiciate error
+		return 0;
+	}
+	setConnectionTimeout(timeout);
+	return 1;
 }
 
 int EthernetClient::availableForWrite(void)

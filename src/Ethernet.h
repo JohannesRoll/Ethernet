@@ -218,8 +218,10 @@ public:
 	virtual ~EthernetClient() {};
 
 	uint8_t status();
-	virtual int connect(IPAddress ip, uint16_t port, uint16_t timeout = 0);
-	virtual int connect(const char *host, uint16_t port, uint16_t timeout = 0);
+	virtual int connect(IPAddress ip, uint16_t port);
+	virtual int connect(IPAddress ip, uint16_t port, uint16_t timeout);
+	virtual int connect(const char *host, uint16_t port);
+	virtual int connect(const char *host, uint16_t port, uint16_t timeout);
 	virtual int availableForWrite(void);
 	virtual size_t write(uint8_t);
 	virtual size_t write(const uint8_t *buf, size_t size);
